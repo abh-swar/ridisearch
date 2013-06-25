@@ -12,7 +12,7 @@ import java.sql.Date;
  * Time: 8:55 AM
  */
 public class User {
-    private int id;
+    private Long id;
     private String name;
     private String userName;
     private String password;
@@ -20,12 +20,13 @@ public class User {
     private String phoneNumber;
     private Date dateCreated;
     private Date dateUpdated;
+    private boolean isRegistered;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,5 +84,13 @@ public class User {
 
     public void setDateUpdated(Date dateUpdated) {
         this.dateUpdated = dateUpdated;
+    }
+
+    public boolean isRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(boolean registered) {
+        isRegistered = registered;
     }
 }

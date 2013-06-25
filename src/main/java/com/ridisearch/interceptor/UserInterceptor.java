@@ -11,19 +11,18 @@ import javax.servlet.http.HttpSession;
 /**
  * Created with IntelliJ IDEA.
  * User: Abhinayak Swar
- * Date: 5/23/13
- * Time: 10:24 AM
+ * Date: 6/19/13
+ * Time: 11:16 PM
  */
-public class AdminInterceptor extends HandlerInterceptorAdapter {
-
+public class UserInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         HttpSession session = httpServletRequest.getSession();
-        boolean isAdmin;
-        isAdmin = session.getAttribute(Constants.IS_ADMIN) != null ?(Boolean)session.getAttribute(Constants.IS_ADMIN):false;
-        System.out.println("isAdmin = " + isAdmin);
+        boolean isLoggedId;
+        isLoggedId = session.getAttribute(Constants.IS_LOGGED_IN) != null ?(Boolean)session.getAttribute(Constants.IS_LOGGED_IN):false;
+        System.out.println("isLoggedIn = " + isLoggedId);
 
-        if (!isAdmin) {
+        if (!isLoggedId) {
             httpServletResponse.sendRedirect("/ridisearch/error/index");
             return false;
         }

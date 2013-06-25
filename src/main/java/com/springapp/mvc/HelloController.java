@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 //	@RequestMapping(method = RequestMethod.GET)
 //	public String printWelcome(ModelMap model) {
 //
-//        model.addAttribute("message", "Hello world!");
+//        model.addAttribute("message", "Hello worldasdsa!");
 //		return "hello";
 //	}
 //}

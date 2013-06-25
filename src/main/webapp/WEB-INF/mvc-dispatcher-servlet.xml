@@ -29,14 +29,19 @@
     <!-- Autowired service Beans-->
     <bean id="userService" class="com.ridisearch.service.UserService"></bean>
     <bean id="loginService" class="com.ridisearch.service.LoginService"></bean>
+    <bean id="adminService" class="com.ridisearch.service.AdminService"></bean>
+    <bean id="registerService" class="com.ridisearch.service.RegisterService"></bean>
 
 
     <mvc:interceptors>
-            <!--<bean class="com.ridisearch.interceptor.SessionInterceptor" />-->
-
         <mvc:interceptor>
             <mvc:mapping path="/admin/*"/>
             <bean class="com.ridisearch.interceptor.AdminInterceptor" />
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/user/*"/>
+            <bean class="com.ridisearch.interceptor.UserInterceptor" />
         </mvc:interceptor>
 
         <mvc:interceptor>
@@ -44,6 +49,8 @@
             <bean class="com.ridisearch.interceptor.SessionInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
+
+    <mvc:annotation-driven/>
 
 </beans>
 

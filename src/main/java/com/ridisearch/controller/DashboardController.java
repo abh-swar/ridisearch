@@ -15,13 +15,20 @@ import javax.servlet.http.HttpServletResponse;
  * Time: 7:48 AM
  */
 @Controller
-@RequestMapping("/")
 public class DashboardController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(ModelMap model) {
-        model.addAttribute("message", "Hello world!");
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    public String index() {
 		return "dashboard/index";
     }
 
+    @RequestMapping(value = "/about", method = RequestMethod.GET)
+    public String about() {
+        return "dashboard/about";
+    }
+
+    @RequestMapping(value = "/contact", method = RequestMethod.GET)
+    public String contact() {
+        return "dashboard/contact";
+    }
 }

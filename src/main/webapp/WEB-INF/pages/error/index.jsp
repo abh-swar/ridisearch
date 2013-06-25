@@ -12,6 +12,6 @@
     <title>Error page</title>
 </head>
 <body>
-      <h2>${message}</h2>
+       <div class="message-box">Some thing went wrong while processing your request. Please contact your administrator.</div>
 </body>
 </html>

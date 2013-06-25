@@ -1,6 +1,6 @@
 package com.ridisearch.interceptor;
 
-import com.ridisearch.utils.Variables;
+import com.ridisearch.utils.Constants;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -19,8 +19,8 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         HttpSession session = httpServletRequest.getSession();
-        if (session.getAttribute(Variables.IS_LOGGED_IN) == null) {
-            session.setAttribute(Variables.IS_LOGGED_IN,false);
+        if (session.getAttribute(Constants.IS_LOGGED_IN) == null) {
+            session.setAttribute(Constants.IS_LOGGED_IN,false);
         }
         return true;
     }
@@ -30,7 +30,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
         HttpSession session = httpServletRequest.getSession();
 //        boolean isAdmin = session.getAttribute("isAdmin") != null ? false : true;
         String val = session.getAttribute("postVal") != null ? (String)session.getAttribute("postVal"): "DEFAULT";
-        System.out.println("val = " + val);
+        System.out.println("val in session interceptor = " + val);
     }
 
     @Override

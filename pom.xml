@@ -97,7 +97,7 @@
     </dependencies>
 
     <build>
-    <finalName>TestApplication</finalName>
+    <finalName>ridisearch</finalName>
     <plugins>
         <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
