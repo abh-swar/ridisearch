@@ -22,27 +22,17 @@
     <hr>
 
     <div class="row-fluid marketing">
-        <div class="span6">
-            <h4>Subheading</h4>
-            <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-            <h4>Subheading</h4>
-            <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-            <h4>Subheading</h4>
-            <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
-
-        <div class="span6">
-            <h4>Subheading</h4>
-            <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-            <h4>Subheading</h4>
-            <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-            <h4>Subheading</h4>
-            <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-        </div>
+        <c:set var="i" value="0" />
+        <c:forEach items="${itemList}" var="item">
+            <c:set var="i" value="${i+1}" />
+                <div class="row-fluid">
+                    <div class="span4">
+                        <h4>${item.itemName}</h4>
+                        <p>Uploaded By : ${item.user.name}</p>
+                        <p><a href="#"> Download</a></p>
+                    </div>
+                </div>
+        </c:forEach>
     </div>
 
     <hr>

@@ -26,8 +26,8 @@
     <form class="form-signin" name="logInForm" id="logInForm" method="post" action="/ridisearch/login/index"
           onsubmit="return validate();">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" class="input-block-level" name="userName" id="userName" placeholder="User Name"/>
-        <input type="password" class="input-block-level" name="password" id="password" placeholder="Password"/>
+        <input required type="text" class="input-block-level" name="userName" id="userName" placeholder="User Name"/>
+        <input required type="password" class="input-block-level" name="password" id="password" placeholder="Password"/>
         <input class="btn btn-large btn-primary" type="submit" value="Log In"/>
     </form>
 </div>

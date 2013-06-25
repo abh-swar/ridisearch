@@ -31,6 +31,12 @@
     <bean id="loginService" class="com.ridisearch.service.LoginService"></bean>
     <bean id="adminService" class="com.ridisearch.service.AdminService"></bean>
     <bean id="registerService" class="com.ridisearch.service.RegisterService"></bean>
+    <bean id="searchService" class="com.ridisearch.service.SearchService"></bean>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="15000000"/>
+    </bean>
 
 
     <mvc:interceptors>

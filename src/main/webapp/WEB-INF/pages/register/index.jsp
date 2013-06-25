@@ -10,7 +10,7 @@
 <body>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#userName").focus();
+        $("#name").focus();
     });
 
     function validateRegistrationForm() {
@@ -24,10 +24,10 @@
 <div class="container">
     <form class="form-signin" name="logInForm" id="logInForm" method="post" action="/ridisearch/register/saveUser" onsubmit="return validateRegistrationForm();">
         <h2 class="form-signin-heading">Please fill the form to register</h2>
-        Full Name:<span class="info-required"> *</span> <input type="text" class="input-block-level" name="name" id="name" placeholder="Full Name"/>
-        User Name:<span class="info-required"> *</span><input type="text" class="input-block-level" name="userName" id="userName" placeholder="Email"/>
-        Password:<span class="info-required"> *</span><input type="password" class="input-block-level" name="password1" id="password1" placeholder="Password"/>
-        Re-enter Password:<span class="info-required"> *</span><input type="password" class="input-block-level" name="password2" id="password2" placeholder="Re-enter Password"/>
+        Full Name:<span class="info-required"> *</span> <input required type="text" class="input-block-level" name="name" id="name" placeholder="Full Name"/>
+        User Name:<span class="info-required"> *</span><input required type="email" class="input-block-level" name="userName" id="userName" placeholder="Email"/>
+        Password:<span class="info-required"> *</span><input required type="password" class="input-block-level" name="password1" id="password1" placeholder="Password"/>
+        Re-enter Password:<span class="info-required"> *</span><input required type="password" class="input-block-level" name="password2" id="password2" placeholder="Re-enter Password"/>
         <input class="btn btn-large btn-primary" type="submit" value="Log In"/>
     </form>
 </div>

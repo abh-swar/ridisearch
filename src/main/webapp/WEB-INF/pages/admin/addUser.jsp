@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<meta name="decorator" content="master"/>
 <%--
   Created by IntelliJ IDEA.
   User: Abhinayak Swar
@@ -10,7 +11,7 @@
 <body>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#userName").focus();
+        $("#name").focus();
     });
 
     function validateAddUserForm() {
@@ -28,13 +29,13 @@
 <div class="container">
     <form class="form-signin" name="editUser" id="editUser" method="post" action="/ridisearch/admin/saveNewUser" onsubmit="return validateAddUserForm();">
         <h2 class="form-signin-heading">Please fill the form to add new user</h2>
-        Full Name:<span class="info-required"> *</span> <input type="text" class="input-block-level" name="name" id="name" placeholder="Full Name"/>
-        User Name:<span class="info-required"> *</span><input type="text" class="input-block-level" name="userName" id="userName" placeholder="User Name"/>
+        Full Name:<span class="info-required"> *</span> <input required type="text" class="input-block-level" name="name" id="name" placeholder="Full Name"/>
+        User Name:<span class="info-required"> *</span><input required type="email" class="input-block-level" name="userName" id="userName" placeholder="User Name"/>
         Address:<input type="text" class="input-block-level" name="address" id="address" placeholder="Address"/>
         Phone Number:<input type="text" class="input-block-level" name="phoneNumber" id="phoneNumber" placeholder="Phone Number"/>
         <div style="margin-bottom:15px;">
-            <input type="checkbox"  name="roles" value="ROLE_ADMIN" />&nbsp;Admin&nbsp;&nbsp;&nbsp;</label>
-            <input type="checkbox"  name="roles" value="ROLE_USER" />&nbsp;User
+            <input  type="checkbox"  name="roles" value="ROLE_ADMIN" />&nbsp;Admin&nbsp;&nbsp;&nbsp;</label>
+            <input  type="checkbox"  name="roles" value="ROLE_USER" />&nbsp;User
         </div>
         <label><input class="btn btn-large btn-primary" type="submit" value="Add User"/></label>
     </form>
