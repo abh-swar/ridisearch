@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,14 +38,29 @@ public class AdminService {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        System.out.println("affectedRows = " + affectedRows);
         return affectedRows != 0;
+    }
+
+
+    public long getItemId(Items items) {
+        String sql = "SELECT id FROM ITEMS where item_name=? and stored_location=? and item_type=? and is_private=? and user_id=? LIMIT 1";
+        long userId = 0;
+        try {
+            userId = jdbcTemplate.queryForLong(sql, items.getItemName(), items.getStoredLocation(),
+                    items.getItemType(), items.getIsPrivate(), items.getUser().getId());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return userId;
+
     }
 
     public void populateItem(HttpServletRequest req, Items items, MultipartFile multipartFile, String access) throws IOException {
         String uploadPath = "";
         byte[] zippedFile = UploadDownloadUtils.zipBytes(multipartFile.getOriginalFilename(), multipartFile.getBytes());
         User user = userService.getUser(Long.parseLong(req.getSession().getAttribute(Constants.USER_ID).toString()));
-
+        System.out.println("user ====>>>> " + user.getId());
         //create item object and save item in DB
         items.setIsPrivate(isPrivate(access));
         items.setUser(user);
@@ -54,15 +70,31 @@ public class AdminService {
 //      Blob blob = new SerialBlob(zippedFile);
 //      items.setFile(blob);
 
-        items.setFile(zippedFile);
+//        items.setFile(zippedFile);
+        items.setFile(multipartFile.getBytes());
         uploadPath = UploadDownloadUtils.getUploadPath(access);
 
+        System.out.println("access = " + access);
         //if is private item append /userName at the back
-        uploadPath = isPrivate(access) ? uploadPath+ File.separator+user.getUserName() : uploadPath;
+        uploadPath = isPrivate(access) ? uploadPath+ File.separator+user.getUserName()+File.separator +items.getItemName()
+                     : uploadPath;
         items.setStoredLocation(uploadPath);
     }
 
     public boolean isPrivate(String access) {
-        return "private".equals(access) && !"public".equals(access);
+        return ("private".equals(access) && !"public".equals(access));
+    }
+
+    public boolean itemAlreadyExistsForUser(Items items) {
+        String sql = "SELECT count(*) FROM ITEMS where item_name=? and stored_location=? and item_type=? and is_private=? and user_id=?";
+        long count = 0;
+        try {
+            count = jdbcTemplate.queryForLong(sql, items.getItemName(), items.getStoredLocation(),
+                    items.getItemType(), items.getIsPrivate(), items.getUser().getId());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("count ===>> " + count);
+        return count > 0;
     }
 }

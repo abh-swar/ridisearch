@@ -2,6 +2,7 @@ package com.ridisearch.utils;
 
 import org.apache.catalina.core.ApplicationPart;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -9,9 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -24,105 +29,8 @@ import java.util.zip.ZipOutputStream;
  */
 @MultipartConfig
 public class UploadDownloadUtils {
-//    public static void processRequest(HttpServletRequest request,
-//                                  HttpServletResponse response, String path,final Part filePart)
-//            throws ServletException, IOException {
-//
-//        response.setContentType("text/html;charset=UTF-8");
-//
-//        // Create path components to save the file
-//
-//        final String fileName   = getFileName(filePart);
-//
-//        OutputStream out = null;
-//        InputStream filecontent = null;
-//        final PrintWriter writer = response.getWriter();
-//
-//        try {
-//            out = new FileOutputStream(new File(path + File.separator
-//                    + fileName));
-//            filecontent = filePart.getInputStream();
-//
-//            int read = 0;
-//            final byte[] bytes = new byte[5000000];
-//
-//            while ((read = filecontent.read(bytes)) != -1) {
-//                out.write(bytes, 0, read);
-//            }
-//            writer.println("New file " + fileName + " created at " + path);
-//            System.out.println("File{0}being uploaded to {1}"+ new Object[]{fileName, path});
-//        } catch (FileNotFoundException fne) {
-//            writer.println("You either did not specify a file to upload or are "
-//                    + "trying to upload a file to a protected or nonexistent "
-//                    + "location.");
-//            writer.println("<br/> ERROR: " + fne.getMessage());
-//
-//            System.out.println("Problems during file upload. Error: {0}" + new Object[]{fne.getMessage()});
-//        } finally {
-//            if (out != null) {
-//                out.close();
-//            }
-//            if (filecontent != null) {
-//                filecontent.close();
-//            }
-//            if (writer != null) {
-//                writer.close();
-//            }
-//        }
-//    }
-//
-//    private static String getFileName(final Part part) {
-//        final String partHeader = part.getHeader("content-disposition");
-//        System.out.println("Part Header = {0}" + partHeader);
-//        for (String content : part.getHeader("content-disposition").split(";")) {
-//            if (content.trim().startsWith("filename")) {
-//                return content.substring(
-//                        content.indexOf('=') + 1).trim().replace("\"", "");
-//            }
-//        }
-//        return null;
-//    }
-//
-    public static void close(Closeable resource) {
-        if (resource != null) {
-            try {
-                resource.close();
-            } catch (IOException e) {
 
-            }
-        }
-    }
-
-//    public static String uploadFile(HttpServletRequest req, String filePath) throws Exception {
-//        User user = (User) request.getSession().getAttribute("user");
-//        String fileName = null;
-//        try{
-//            HttpServletRequestWrapper request = new HttpServletRequestWrapper(req);
-//            for (Part part : request.getParts()) {
-//                InputStream is = request.getPart(part.getName()).getInputStream();
-//                String temp = ((ApplicationPart)part).getFilename();
-//                if(temp==null || temp.trim().length()==0){
-//                    return fileName;
-//                }
-////                fileName = MD5helper.getMD5Hash(String.valueOf(System.currentTimeMillis())) + "." + FileUtility.getExtensionFile(new File(temp));
-//                fileName = temp+System.currentTimeMillis();
-//                File path = new File(filePath);
-//
-//                if (!path.exists()) {
-//                    path.mkdirs();
-//                }
-//                File uploadedFile = new File(path + File.separator + fileName);
-//                FileOutputStream os = new FileOutputStream(uploadedFile);
-////                FileUtility.copyFile(is, os);
-////                os.write(is.read());
-//                IOUtils.copy(is, os);
-//                System.out.println("File Successfully uploaded to " + path);
-//            }
-//        }catch(Exception e){
-//        }
-//        return fileName;
-//    }
-
+    private static final int DEFAULT_BUFFER_SIZE = 20480000;
 
     public static byte[] zipBytes(String filename, byte[] input) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -170,6 +78,38 @@ public class UploadDownloadUtils {
         md.update(text.getBytes("iso-8859-1"), 0, text.length());
         md5hash = md.digest();
         return convertToHex(md5hash);
+    }
+
+    public static void download(Map<String, String> itemMap, byte[] itemBytes, HttpServletResponse res) throws SQLException, IOException {
+        String contentType  = itemMap.get("itemType");
+        String fileName     = itemMap.get("itemName");
+
+        Blob blob = new SerialBlob(itemBytes);
+        BufferedInputStream is = new BufferedInputStream(blob.getBinaryStream(),DEFAULT_BUFFER_SIZE);
+        File file = new File(fileName);
+
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        res.reset();
+        res.setBufferSize(DEFAULT_BUFFER_SIZE);
+        res.setContentType(contentType);
+        res.setHeader("Content-Length", String.valueOf(blob.length()));
+        res.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+
+        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+        BufferedOutputStream fos = new BufferedOutputStream(res.getOutputStream(), DEFAULT_BUFFER_SIZE);
+        // you can set the size of the buffer
+        int length = 0;
+        while((length = is.read(buffer))!=-1) {
+            fos.write(buffer, 0, length);
+        }
+
+        fos.flush();
+        fos.close();
+        is.close();
+//        blob.free();
+
     }
 
 

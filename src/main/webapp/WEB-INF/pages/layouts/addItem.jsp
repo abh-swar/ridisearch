@@ -19,7 +19,34 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#file").focus();
+        //binds to onchange event of your input field
+        $('#myFile').bind('change', function() {
+            //max 10mb
+            if (this.files[0].size > 10485760) {
+                alert("Cannot upload a file greater than 10mb in size.");
+                resetFormElement();
+                return false;
+            }
+            var ext = $('#myFile').val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gif','png','jpg','jpeg','txt','doc','docx','pdf','xls','xlx','ppt','sql','mp3']) == -1) {
+                alert('invalid extension!');
+                resetFormElement();
+                return false;
+            }
+
+            return true;
+        });
+
+
     });
+
+
+
+    function resetFormElement() {
+        $('#editUser').each(function(){
+            this.reset();
+        });
+    }
 
     function validateUploadFile() {
         if ($("#file").val() == "") {
@@ -33,10 +60,11 @@
         return true;
     }
 </script>
+<div class="message-box">Only files with gif, png, jpg, jpeg, txt, doc, docx, pdf, xls, xlx, ppt, sql, mp3 extensions are allowed</div>
 <div class="container">
     <form class="form-signin" name="editUser" id="editUser" method="post" action="${addItem}" enctype="multipart/form-data" onsubmit="return validateUploadFile();">
         <h2 class="form-signin-heading">Please upload a file</h2>
-        File:<span class="info-required"> *</span> <input required type="file" class="input-block-level" name="files[0]" />
+        File:<span class="info-required"> *</span> <input required type="file" class="input-block-level" id="myFile" name="files[0]"/>
         <div style="margin-bottom:15px;">
             <input required type="radio"  name="access" value="private" />&nbsp;Private&nbsp;&nbsp;&nbsp;</label>
             <input required type="radio"  name="access" value="public" />&nbsp;Public

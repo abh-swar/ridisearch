@@ -49,7 +49,7 @@
                     <%--</li>--%>
                 </ul>
                 <form class="navbar-form pull-right" name="generalSearch" action="/ridisearch/search/index" method="post">
-                    <input type="text" class="span2" placeholder="Search" name="searchBar"  />
+                    <input type="text" class="span2" placeholder="Search" name="query"  />
                     <button type="submit" class="btn">Submit</button>
                 </form>
             </div><!--/.nav-collapse -->

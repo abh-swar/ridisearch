@@ -32,6 +32,8 @@
     <bean id="adminService" class="com.ridisearch.service.AdminService"></bean>
     <bean id="registerService" class="com.ridisearch.service.RegisterService"></bean>
     <bean id="searchService" class="com.ridisearch.service.SearchService"></bean>
+    <bean id="luceneIndexService" class="com.ridisearch.service.LuceneIndexService"></bean>
+    <bean id="luceneSearchService" class="com.ridisearch.service.LuceneSearchService"></bean>
 
     <bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

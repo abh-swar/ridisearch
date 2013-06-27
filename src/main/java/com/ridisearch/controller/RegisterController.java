@@ -26,8 +26,6 @@ public class RegisterController {
 
     @RequestMapping(value = "/index", method = { RequestMethod.GET, RequestMethod.POST })
     public String index() {
-//        String message = "Successfully logged in. Welcome admin.";
-//        modelMap.addAttribute("message",message);
         return  "register/index";
     }
 

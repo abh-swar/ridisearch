@@ -2,10 +2,11 @@ package com.ridisearch.controller;
 
 import com.ridisearch.domain.Items;
 import com.ridisearch.domain.MultipartFileUploadBean;
+import com.ridisearch.domain.SearchHits;
 import com.ridisearch.domain.User;
-import com.ridisearch.service.AdminService;
-import com.ridisearch.service.UserService;
+import com.ridisearch.service.*;
 import com.ridisearch.utils.Constants;
+import com.ridisearch.utils.UploadDownloadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,30 +42,51 @@ public class UserController {
     @Autowired
     AdminService adminService;
 
+    @Autowired
+    SearchService searchService;
+
+    @Autowired
+    LuceneIndexService luceneIndexService;
+
+    @Autowired
+    LuceneSearchService luceneSearchService;
+
     private String message;
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(HttpServletRequest req, HttpServletResponse res) {
-        String val = req.getSession().getAttribute("test") != null ? (String)req.getSession().getAttribute("test") : "DEFAULT";
-        req.getSession().setAttribute("postVal", "PostVal");
-        return "user/index";
+
+    @RequestMapping(value = "/index", method = { RequestMethod.GET, RequestMethod.POST })
+    public String index(HttpServletRequest request) {
+        long userId = (Long) request.getSession().getAttribute(Constants.USER_ID);
+        List<Items> itemList = searchService.findItemsForUser(userId);
+        request.setAttribute("itemList",itemList);
+        return  "user/index";
     }
 
 
     @RequestMapping(value = "/about", method = RequestMethod.GET)
-    public String about(ModelMap model) {
+    public String about() {
         return "user/about";
     }
 
     @RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
     public String search(HttpServletRequest req, HttpServletResponse res, ModelMap modelMap) {
-//        String message = "Successfully logged in. Welcome admin.";
-//        modelMap.addAttribute("message",message);
+        String query = req.getParameter("query");
+        List<SearchHits> listOfHits = new ArrayList<SearchHits>();
+
+        try {
+            luceneSearchService.searchIndex(query, listOfHits);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        req.setAttribute("listOfHits", listOfHits);
+        req.setAttribute("hitsCount", listOfHits.size());
+
         return  "user/searchResult";
     }
 
     @RequestMapping(value = "/profile", method = { RequestMethod.GET, RequestMethod.POST })
-    public String profile(HttpServletRequest req, HttpServletResponse res, ModelMap modelMap) {
+    public String profile(HttpServletRequest req, ModelMap modelMap) {
         User user = service.getUser(Long.parseLong(req.getSession().getAttribute(Constants.USER_ID).toString()));
         modelMap.addAttribute("user",user);
         return  "user/profile";
@@ -122,19 +146,18 @@ public class UserController {
                 System.out.println("multipartFile = " + multipartFile.getSize());
                 sb.append(String.format("File: %s, contains: %s<br/>\n",multipartFile.getOriginalFilename(),
                         new String(multipartFile.getBytes())));
+                String content = sb.toString();
 
                 adminService.populateItem(req,items, multipartFile, access);
+                System.out.println("items.getUser().getName() = " + items.getUser().getId());
+                if (!adminService.itemAlreadyExistsForUser(items) && adminService.saveItem(items)) {
+                    message             = "File successfully uploaded";
+                    message             = luceneIndexService.index(items,multipartFile,content);
 
-                if (adminService.saveItem(items)) {
-                    //index content, userid, filename, id,stored_location,item_type
-                    String content = sb.toString();
-
-//                    System.out.println("content = " + content);
-                    model.addAttribute("content", content);
-                    message = "File successfully uploaded";
                 } else {
-                    message = "Could not upload file";
+                    message = "Could not upload file. You probably already have a file by this name.";
                 }
+
             } catch (MaxUploadSizeExceededException ex) {
                 ex.printStackTrace();
                 message = "File cannot be bigger than 15MB in size.";
@@ -147,6 +170,69 @@ public class UserController {
         attributes.addFlashAttribute("message",message);
         return "redirect:/ridisearch/user/addItems";
 
+    }
+
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public String download(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
+
+        long itemId     = Long.parseLong(req.getParameter("id"));
+        long userId     = (Long) req.getSession().getAttribute(Constants.USER_ID);
+
+        Map<String,String> itemMap  = searchService.getUserItemDetails(itemId,userId);
+        byte[] itemBytes            = searchService.downloadUserFile(itemId, userId);
+
+        UploadDownloadUtils.download(itemMap, itemBytes, res);
+        return "user/index";
+    }
+
+
+    @RequestMapping(value = "/updateItem", method = { RequestMethod.GET, RequestMethod.POST })
+    public String updateItem(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
+
+        Long itemId     = Long.parseLong(req.getParameter("id"));
+        long userId     = (Long) req.getSession().getAttribute(Constants.USER_ID);
+
+        Items item  = searchService.getItem(itemId, userId);
+        req.setAttribute("item",item);
+        return "user/updateItem";
+    }
+
+    @RequestMapping(value = "/saveUpdatedItem",method = { RequestMethod.GET, RequestMethod.POST })
+    public String saveUpdatedItem(HttpServletRequest req, RedirectAttributes attributes) throws SQLException, IOException {
+
+        Long itemId     = Long.parseLong(req.getParameter("id"));
+        String itemName = req.getParameter("itemName") != null ? req.getParameter("itemName") : "file.txt";
+        boolean isPrivate   = req.getParameter("access").equals("private");
+
+        if (searchService.saveUpdatedItem(itemId,itemName,isPrivate)) {
+            message = "Item successfully updated!";
+        } else {
+            message = "Item could not be updated!";
+        }
+
+        attributes.addFlashAttribute("message",message);
+        return "redirect:/ridisearch/user/index";
+    }
+
+    @RequestMapping(value = "/deleteItem",method = { RequestMethod.GET, RequestMethod.POST })
+    public String deleteItem(HttpServletRequest req, RedirectAttributes attributes) throws SQLException, IOException {
+
+        Long itemId         = Long.parseLong(req.getParameter("id"));
+        Boolean isPrivate   = req.getParameter("private").equals("true");
+
+        //if public delete from lucene index
+        if (!isPrivate) {
+            luceneIndexService.deleteLuceneIndex(itemId.toString());
+        }
+
+        if (searchService.deleteItem(itemId)) {
+            message = "Item successfully deleted!";
+        } else {
+            message = "Item could not be deleted!";
+        }
+
+        attributes.addFlashAttribute("message",message);
+        return "redirect:/ridisearch/user/index";
     }
 
 
