@@ -119,53 +119,11 @@ public class LuceneIndexService {
     }
 
 
-//    /*
-//     * A method used to perform search operation on the indexed files that analyzes the
-//     * Lucene query string and prints the result to the console
-//     */
-//    public void searchIndex(String queryString) throws ParseException, IOException {
-//
-//        Query query = new QueryParser(Version.LUCENE_41, "contents", analyzer).parse(queryString);
-//
-//
-//        //serach
-//        int hitsPerPage = 10;
-//        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(INDEX_PATH)));
-//        IndexSearcher searcher = new IndexSearcher(reader);
-//
-//        TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-//        searcher.search(query, collector);
-//
-//        ScoreDoc[] hits = collector.topDocs().scoreDocs;
-//
-//        //print result to console
-//        System.out.println("Found : " + hits.length + " hits.");
-//        for (int i = 0; i < hits.length; i++) {
-//            int docId = hits[i].doc;
-//            Document d = searcher.doc(docId);
-//            System.out.println((i+1) + ". " + d.get("path") + "\t" + hits[i].score);
-//        }
-//
-//        reader.close();
-//    }
-
-
-//    /*
-//     * A method that parses a file and returns its content as a String object
-//     */
-//    private String parseReport(final File file) throws IOException, TikaException {
-//        Tika tika = new Tika();
-//        String content = tika.parseToString(file);
-//        return content;
-//    }
-
-
     /*
      * A method that adds the content, filename and path to the document object
      */
     private void addDoc(IndexWriter w, String content, String itemId, String uploadedBy, String fileName) throws IOException {
         Document doc = new Document();
-        System.out.println("contents = " + content);
         doc.add(new TextField("contents", content, Field.Store.YES));
         doc.add(new StringField("itemId", itemId, Field.Store.YES));
         doc.add(new StringField("uploadedBy", uploadedBy, Field.Store.YES));

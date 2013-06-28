@@ -28,7 +28,7 @@
                 return false;
             }
             var ext = $('#myFile').val().split('.').pop().toLowerCase();
-            if($.inArray(ext, ['gif','png','jpg','jpeg','txt','doc','docx','pdf','xls','xlx','ppt','sql','mp3']) == -1) {
+            if($.inArray(ext, ['gif','png','jpg','jpeg','txt','doc','docx','pdf','xls','xlsx','ppt','sql','mp3']) == -1) {
                 alert('invalid extension!');
                 resetFormElement();
                 return false;
@@ -49,7 +49,7 @@
     }
 
     function validateUploadFile() {
-        if ($("#file").val() == "") {
+        if ($("#myFile").val() == "") {
             alert("File cannot be empty!!");
             return false;
         }
@@ -64,7 +64,7 @@
 <div class="container">
     <form class="form-signin" name="editUser" id="editUser" method="post" action="${addItem}" enctype="multipart/form-data" onsubmit="return validateUploadFile();">
         <h2 class="form-signin-heading">Please upload a file</h2>
-        File:<span class="info-required"> *</span> <input required type="file" class="input-block-level" id="myFile" name="files[0]"/>
+        File:<span class="info-required"> *</span> <span class="btn btn-file"><input required type="file" class="input-block-level" id="myFile" name="files[0]"/></span>
         <div style="margin-bottom:15px;">
             <input required type="radio"  name="access" value="private" />&nbsp;Private&nbsp;&nbsp;&nbsp;</label>
             <input required type="radio"  name="access" value="public" />&nbsp;Public

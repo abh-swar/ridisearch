@@ -51,6 +51,9 @@ public class UserController {
     @Autowired
     LuceneSearchService luceneSearchService;
 
+    @Autowired
+    LoginService loginService;
+
     private String message;
 
 
@@ -66,6 +69,30 @@ public class UserController {
     @RequestMapping(value = "/about", method = RequestMethod.GET)
     public String about() {
         return "user/about";
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String changePassword(HttpServletRequest request) {
+        return "user/changePassword";
+    }
+
+    @RequestMapping(value = "/saveNewPassword", method = { RequestMethod.GET, RequestMethod.POST })
+    public String saveNewPassword(HttpServletRequest request) {
+        long userId         = (Long) request.getSession().getAttribute(Constants.USER_ID);
+        String oldPassword  = request.getParameter("oldPassword") != null   ? (String) request.getParameter("oldPassword")  : "";
+        String password1    = request.getParameter("password1") != null     ? (String) request.getParameter("password1")    : "";
+        String password2    = request.getParameter("password2") != null     ? (String) request.getParameter("password2")    : "";
+
+        String userName     = service.getUser(userId).getUserName();
+
+        if (loginService.getUser(userName,oldPassword) != null && password1.equals(password2)) {
+            message = service.changePassword(userId, password1) ? "Password updated successfully" : "Ops, password could not be updated.Please try again or contact your administrator! ";
+        } else {
+            message = "Bad credentials. Please try again or contact your administrator!";
+        }
+
+        request.setAttribute("message",message);
+        return "user/changePassword";
     }
 
     @RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })

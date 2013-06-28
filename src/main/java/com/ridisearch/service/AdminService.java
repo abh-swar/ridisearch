@@ -60,7 +60,6 @@ public class AdminService {
         String uploadPath = "";
         byte[] zippedFile = UploadDownloadUtils.zipBytes(multipartFile.getOriginalFilename(), multipartFile.getBytes());
         User user = userService.getUser(Long.parseLong(req.getSession().getAttribute(Constants.USER_ID).toString()));
-        System.out.println("user ====>>>> " + user.getId());
         //create item object and save item in DB
         items.setIsPrivate(isPrivate(access));
         items.setUser(user);
@@ -96,5 +95,37 @@ public class AdminService {
         }
         System.out.println("count ===>> " + count);
         return count > 0;
+    }
+
+
+    public String takeBackup() {
+
+        String message = "";
+        String executeCmd = Constants.DB_PATH;
+        System.out.println("executeCmd = " + executeCmd);
+        Process runtimeProcess;
+        try
+        {
+            System.out.println(executeCmd);
+
+            //this out put works in mysql shell
+            runtimeProcess = Runtime.getRuntime().exec(executeCmd);
+            int processComplete = runtimeProcess.waitFor();
+
+            if (processComplete == 0)
+            {
+                System.out.println("Backup created successfully");
+                message = "Backup created successfully in " + Constants.DB_OUTPUT_PATH;
+            }
+            else
+            {
+                System.out.println("Could not create the backup");
+                message = "Could not create the backup";
+            }
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return  message;
     }
 }

@@ -1,9 +1,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <meta name="decorator" content="master"/>
+<body>
+<script type="text/javascript">
+    function printAdminPannel() {
+        $("#printAdminPanel").printElement({printMode: 'popup'});
+    }
+</script>
 <div class="span13">
-    <div class="hero-unit">
+    <div class="hero-unit" id="printAdminPanel">
         <h4 class="pull-left">List</h4>
-        <a href="/ridisearch/admin/addUser" role="button" data-toggle="modal" class="pull-right" title="Add New User">Add New User</a>
+        <div class="row">
+            <span class="pull-right">
+                <a href="javascript:void(0)" class="icon-print" onclick="printAdminPannel()"></a>&nbsp;&nbsp;
+                <a href="/ridisearch/admin/addUser" role="button" data-toggle="modal" class="btn btn-primary" title="Add New User">Add New User</a>
+            </span>
+        </div>
         <table class="table table-striped">
             <tr>
                 <th>Name</th>
@@ -27,3 +38,5 @@
         </table>
     </div>
 </div>
+</body>
+

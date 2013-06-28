@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,5 +52,14 @@ public class LoginService {
             ex.printStackTrace();
         }
         return roleList;
+    }
+
+    public void setLog(User user, String action) {
+        String sql = "INSERT INTO user_log (user_name, name, user_id, action) VALUES (?,?,?,?)";
+        try {
+            jdbcTemplate.update(sql, user.getUserName(), user.getName(), user.getId(), action);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

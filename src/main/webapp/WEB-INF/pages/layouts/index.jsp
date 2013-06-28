@@ -23,18 +23,15 @@
 </c:choose>
 <div class="container-fluid">
 
-    <div class="jumbotron">
-        <p class="lead">Uploaded items</p>
-    </div>
-    <%--<hr>--%>
 
     <div class="row-fluid marketing">
+        <p class="lead offset1 text-info">Uploaded items</p>
         <c:set var="i" value="0" />
         <c:forEach items="${itemList}" var="item">
             <hr>
             <c:set var="i" value="${i+1}" />
             <div class="row-fluid">
-                <div class="span8">
+                <div class="span8 offset1">
                     <a href="<c:url value="${download}?id=${item.id}"/>" title="Click to download"><h4>Title : ${item.itemName}</h4></a>
                     <p>Status :
                         <c:choose>

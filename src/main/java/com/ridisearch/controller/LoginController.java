@@ -68,6 +68,9 @@ public class LoginController {
                 action  = "/user/index";
             }
 
+            //log the event
+            loginService.setLog(user, "LOGGED_IN");
+
         } else {
             message = "Wrong credentials. Please provide the correct credentials or contact your Administrator.";
             action  = "/login/form";        /*redirect to Dashboard's index action*/

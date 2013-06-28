@@ -7,6 +7,8 @@ import com.ridisearch.domain.User;
 import com.ridisearch.service.*;
 import com.ridisearch.utils.Constants;
 import com.ridisearch.utils.UploadDownloadUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -71,6 +74,30 @@ public class AdminController {
     @RequestMapping(value = "/about", method = RequestMethod.GET)
     public String about() {
         return "admin/about";
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String changePassword(HttpServletRequest request) {
+        return "admin/changePassword";
+    }
+
+    @RequestMapping(value = "/saveNewPassword", method = { RequestMethod.GET, RequestMethod.POST })
+    public String saveNewPassword(HttpServletRequest request) {
+        long userId         = (Long) request.getSession().getAttribute(Constants.USER_ID);
+        String oldPassword  = request.getParameter("oldPassword")  != null ? (String) request.getParameter("oldPassword")  : "";
+        String password1    = request.getParameter("password1")    != null ? (String) request.getParameter("password1")    : "";
+        String password2    = request.getParameter("password2")    != null ? (String) request.getParameter("password2")    : "";
+
+        String userName     = userService.getUser(userId).getUserName();
+
+        if (loginService.getUser(userName,oldPassword) != null && password1.equals(password2)) {
+            message = userService.changePassword(userId, password1) ? "Password updated successfully" : "Ops, password could not be updated.Please try again or contact your administrator! ";
+        } else {
+            message = "Bad credentials. Please try again or contact your administrator!";
+        }
+
+        request.setAttribute("message",message);
+        return "admin/changePassword";
     }
 
 
@@ -156,8 +183,9 @@ public class AdminController {
     public String saveNewUser(HttpServletRequest req, RedirectAttributes attributes) {
         User user   = userService.newUser(req);
         if (userService.saveNewUser(user)) {
-            long userId = loginService.getUser(user.getUserName(),user.getPassword()).getId();
-            String[] roles = req.getParameterValues("roles");
+            long userId     = loginService.getUser(user.getUserName(),user.getPassword()).getId();
+            String[] roles  = req.getParameterValues("roles");
+
             for (String role : roles) {
                 if (role.equals(Constants.ROLE_ADMIN)) {
                     userService.saveUserRole(Constants.ROLE_ADMIN_ID, userId);
@@ -289,4 +317,12 @@ public class AdminController {
         return "redirect:/ridisearch/admin/index";
     }
 
+    @RequestMapping(value = "/takeBackup",method = { RequestMethod.GET, RequestMethod.POST })
+    public String takeBackup(RedirectAttributes attributes) {
+
+        String message = service.takeBackup();
+
+        attributes.addFlashAttribute("message",message);
+        return "redirect:/ridisearch/admin/index";
+    }
 }

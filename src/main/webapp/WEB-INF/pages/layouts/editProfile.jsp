@@ -31,7 +31,7 @@
 </script>
 <div class="container">
     <form class="form-signin" name="editUser" id="editUser" method="post" action="${saveUser}?id=${user.id}" onsubmit="return validateRegistrationForm();">
-        <h2 class="form-signin-heading">Please fill the form to register</h2>
+        <h2 class="form-signin-heading">Edit user information</h2>
         Full Name:<span class="info-required"> *</span> <input required type="text" class="input-block-level" name="name" id="name" value="${user.name}" placeholder="Full Name"/>
         User Name:<span class="info-required"> *</span><input required type="text" class="input-block-level" name="userName" id="userName" value="${user.userName}" placeholder="User Name"/>
         Address:<input type="text" class="input-block-level" name="address" id="address" value="${user.address}" placeholder="Address"/>

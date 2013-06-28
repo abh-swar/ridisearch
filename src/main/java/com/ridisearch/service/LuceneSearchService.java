@@ -84,7 +84,6 @@ public class LuceneSearchService {
 	    	Document d = searcher.doc(docId);
 	    	System.out.println((i+1) + ". " +
 	    	"fileName : " + d.get("fileName") + "\t" +
-//	    	d.get("contents") + "\t" +
 			"uploadedby : " +d.get("uploadedBy") + "\t" +
 			"itemId : " + d.get("itemId") + "\t" +
 	    	"Hits : " + hits[i].score);

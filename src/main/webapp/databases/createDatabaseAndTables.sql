@@ -61,13 +61,23 @@ DELIMITER ;
 
 
 
+CREATE TABLE user_log (
+  id int auto_increment primary key,
+  logged_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_name varchar(250),
+  name varchar(100),
+  user_id int,
+  action varchar(250)  
+);
+
+
+
   ---------------------------------------------------------------------CREATE ADMIN USER-----------------------------------------------------------------------------------
 INSERT INTO USER (name, user_name, password, address, phone_number) 
 VALUES ("Abhinayak Swar", "aswar@deerwalk.com", MD5("P@ssw0rd"), "Maitidevi, Kathmandu", "8881212");
 
 INSERT INTO USER_ROLE (user_id, role_id) values (1,1);
 INSERT INTO USER_ROLE (user_id, role_id) values (1,2);
-
 
 
 

@@ -137,4 +137,15 @@ public class UserService {
         return user;
 
     }
+
+    public boolean changePassword(long userId, String password1) {
+        String sql = "UPDATE user SET password = MD5(?) WHERE id=?";
+        int affectedRows = 0;
+        try {
+            affectedRows = jdbcTemplate.update(sql, password1,userId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return affectedRows != 0;
+    }
 }

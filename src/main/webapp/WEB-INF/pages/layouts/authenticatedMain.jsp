@@ -35,12 +35,14 @@
                     <c:set var="searchAction" value="/ridisearch/admin/search" />
                     <c:set var="addAction" value="/ridisearch/admin/addItems" />
                     <c:set var="profileAction" value="/ridisearch/admin/profile" />
+                    <c:set var="changePassword" value="/ridisearch/admin/changePassword" />
                 </c:when>
                 <c:otherwise>
                     <c:set var="homeAction" value="/ridisearch/user/index" />
                     <c:set var="searchAction" value="/ridisearch/user/search" />
                     <c:set var="addAction" value="/ridisearch/user/addItems" />
                     <c:set var="profileAction" value="/ridisearch/user/profile" />
+                    <c:set var="changePassword" value="/ridisearch/user/changePassword" />
                 </c:otherwise>
             </c:choose>
             <div class="nav-collapse collapse">
@@ -48,15 +50,19 @@
                     <li class="active"><a href="<c:url value="${homeAction}"/>">Home</a></li>
                     <li><a href="<c:url value="${profileAction}"/>">Profile</a></li>
                     <li><a href="${addAction}">Add Items</a></li>
-                    <li><a href="<c:url value="/ridisearch/user/about"/>">About</a></li>
+                    <c:if test="${sessionScope.isAdmin==false}">
+                        <li><a href="<c:url value="/ridisearch/user/about"/>">About</a></li>
+                    </c:if>
                     <c:if test="${sessionScope.isAdmin==true}">
                         <li><a href="<c:url value="/ridisearch/admin/panel"/>">Admin Panel</a></li>
+                        <li><a href="<c:url value="/ridisearch/admin/takeBackup"/>">DB Backup</a></li>
                     </c:if>
+                    <li><a href="<c:url value="${changePassword}"/>">Change Password</a></li>
                     <li><a href="<c:url value="/ridisearch/logout/index"/>">Logout</a></li>
                 </ul>
 
-                <form class="navbar-form pull-right" name="generalSearch" action="${searchAction}" method="post">
-                    <input type="text" class="span2" placeholder="Search" name="query"  />
+                <form class="navbar-form pull-right" id="generalSearch" name="generalSearch" action="${searchAction}" method="post">
+                    <input type="text" class="span2" id="query" placeholder="Search" name="query"  />
                     <button type="submit" class="btn">Submit</button>
                 </form>
             </div><!--/.nav-collapse -->
@@ -74,6 +80,18 @@
 <decorator:body />
 
 <jsp:include page="footer.jsp" flush="true"/>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#query").typeahead({
+            source: function(query, process){
+                return $.get('/ridisearch/autoComplete', { query: query }, function (data) {
+                    var ajaxData = data.split(",");
 
+                    return process(ajaxData);
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -28,9 +28,21 @@ public class Constants {
 
     public static long MAX_UPLOAD_SIZE = 14000000;
 
-    public static final List<String> textList = new ArrayList<String>(Arrays.asList("txt","doc","docx","pdf","xls","xlx","ppt","sql"));
+    public static final List<String> textList = new ArrayList<String>(Arrays.asList("txt","doc","docx","pdf","xls","xlsx","ppt","sql"));
     public static final List<String> multimediaList = new ArrayList<String>(Arrays.asList("gif","png","jpg","jpeg","mp3"));
 
 
     public static String INDEX_PATH = File.separator + "ridisearch" + File.separator + "luceneIndex" + File.separator;
+    public static String MYSQL_USER          = "root";
+    public static String MYSQL_PASSWORD      = "root";
+    public static String MYSQL_DATABASE_NAME = "ridisearch";
+    public static String DB_OUTPUT_PATH      = File.separator + "ridisearch" + File.separator + "ridisearch.sql";
+
+    public static String PATH_TO_MYSQL = File.separator + "usr" + File.separator + "local"  + File.separator+ "mysql-5.5.22-osx10.6-x86_64" +
+                                         File.separator + "bin" + File.separator;
+
+
+    public static String DB_PATH = PATH_TO_MYSQL + "mysqldump -u" + MYSQL_USER + " -p" + MYSQL_PASSWORD + " --add-drop-database -B "+ MYSQL_DATABASE_NAME + " -r " + DB_OUTPUT_PATH;
+
+
 }

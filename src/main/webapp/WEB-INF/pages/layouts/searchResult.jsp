@@ -14,19 +14,20 @@
 <body>
 <div class="container-fluid">
 
-    <div class="jumbotron">
-        <p class="lead">Search Result      Total hits: ${hitsCount}</p>
-    </div>
+    <%--<div class="jumbotron">--%>
+        <%----%>
+    <%--</div>--%>
     <%--<hr>--%>
 
     <div class="row-fluid marketing">
+        <p class="lead offset1 text-info">Search Result &nbsp;&nbsp;&nbsp;Total hits: ${hitsCount}</p>
         <c:set var="i" value="0" />
         <c:forEach items="${listOfHits}" var="hit">
             <hr>
             <c:set var="i" value="${i+1}" />
             <div class="row-fluid">
-                <div class="span8">
-                    <h4>Title : ${hit.fileName}</h4>
+                <div class="span8 offset1">
+                    <h4 class="text-info">Title : ${hit.fileName}</h4>
                     <p>Uploaded By : ${hit.uploadedBy}</p>
                     <p>Status : Public   <a href="/ridisearch/download?id=${hit.itemId}">Download</a></p>
                 </div>

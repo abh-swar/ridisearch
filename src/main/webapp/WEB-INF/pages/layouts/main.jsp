@@ -49,7 +49,7 @@
                     <%--</li>--%>
                 </ul>
                 <form class="navbar-form pull-right" name="generalSearch" action="/ridisearch/search/index" method="post">
-                    <input type="text" class="span2" placeholder="Search" name="query"  />
+                    <input type="text" class="span2" id="query" placeholder="Search" name="query"  />
                     <button type="submit" class="btn">Submit</button>
                 </form>
             </div><!--/.nav-collapse -->
@@ -68,7 +68,19 @@
 <decorator:body />
 
 <jsp:include page="footer.jsp" flush="true"/>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#query").typeahead({
+            source: function(query, process){
+                return $.get('/ridisearch/autoComplete', { query: query }, function (data) {
+                    var ajaxData = data.split(",");
 
+                    return process(ajaxData);
+                });
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
